@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop All - District K</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="Logo 1.png" class="logo-img">
+                </a>
+                <a href="index.html" class="logo-text">District K</a>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="cart.html">Cart</a></li>
+                    <li><a href="requests.html">Request</a></li>
+                    <li><a href="shop all.html">Shop all</a></li>
+                    <li><a href="login.html">Log Out</a></li>
+                </ul>
+                <!-- Search bar -->
+                <input type="text" id="searchBar" placeholder="Search merch..." onkeyup="filterItems()">
+            </nav>
+        </div>
+    </header>
+
+    <section class="shop-all">
+        <h2>Shop All</h2>
+
+        <!-- Categories -->
+        <div class="categories">
+            <button onclick="filterCategory('all')">All</button>
+            <button onclick="filterCategory('hoodie')">Hoodies</button>
+            <button onclick="filterCategory('tshirt')">T-Shirts</button>
+            <button onclick="filterCategory('lightstick')">Lightsticks</button>
+            <button onclick="filterCategory('keychain')">Keychains</button>
+        </div>
+
+        <!-- Groups -->
+        <div class="groups">
+            <button onclick="filterGroup('all')">All Groups</button>
+            <button onclick="filterGroup('bts')">BTS</button>
+            <button onclick="filterGroup('aespa')">Aespa</button>
+            <button onclick="filterGroup('seventeen')">Seventeen</button>
+            <button onclick="filterGroup('illit')">Illit</button>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="products" id="productsContainer">
+
+            <!-- Example Product with size and quantity -->
+            <div class="product" data-group="bts" data-category="hoodie">
+                <img src="black bts hoodie.png" alt="BTS Black Hoodie">
+                <h3>BTS Black Hoodie</h3>
+                <p>$45</p>
+                <label>Size:
+                    <select class="size">
+                        <option value="S">S</option>
+                        <option value="M" selected>M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </label>
+                <label>Qty:
+                    <input type="number" class="quantity" value="1" min="1">
+                </label>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+
+            <div class="product" data-group="bts" data-category="tshirt">
+                <img src="SS Tshirt bts.png" alt="SS Tshirt bts">
+                <h3>SS Tshirt bts</h3>
+                <p>$40</p>
+                <label>Size:
+                    <select class="size">
+                        <option value="S">S</option>
+                        <option value="M" selected>M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </label>
+                <label>Qty:
+                    <input type="number" class="quantity" value="1" min="1">
+                </label>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+
+            <!-- Keychains and lightsticks (no size) -->
+            <div class="product" data-group="bts" data-category="keychain">
+                <img src="BTS Black Keychain.png" alt="BTS Black Keychain">
+                <h3>BTS Black Keychain</h3>
+                <p>$15</p>
+                <label>Qty:
+                    <input type="number" class="quantity" value="1" min="1">
+                </label>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+
+            <!-- Add other products following same format -->
+            <!-- Make sure to add size selectors for hoodies/tshirts, skip for lightsticks/keychains -->
+
+        </div>
+    </section>
+
+    <script>
+        // Category filter
+        function filterCategory(category) {
+            const products = document.querySelectorAll('.product');
+            products.forEach(product => {
+                if (category === 'all' || product.dataset.category.toLowerCase() === category.toLowerCase()) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+
+        // Group filter
+        function filterGroup(group) {
+            const products = document.querySelectorAll('.product');
+            products.forEach(product => {
+                if (group === 'all' || product.dataset.group.toLowerCase() === group.toLowerCase()) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+
+        // Search filter
+        function filterItems() {
+            const searchValue = document.getElementById('searchBar').value.toLowerCase();
+            const products = document.querySelectorAll('.product');
+            products.forEach(product => {
+                const text = product.querySelector('h3').innerText.toLowerCase();
+                if (text.includes(searchValue)) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+
+        // Add to Cart
+        const cartButtons = document.querySelectorAll('.add-to-cart');
+        cartButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const productDiv = e.target.closest('.product');
+                const name = productDiv.querySelector('h3').innerText;
+                const price = parseFloat(productDiv.querySelector('p').innerText.replace('$',''));
+                const sizeSelect = productDiv.querySelector('.size');
+                const size = sizeSelect ? sizeSelect.value : '';
+                const qtyInput = productDiv.querySelector('.quantity');
+                const quantity = qtyInput ? parseInt(qtyInput.value) : 1;
+
+                // Get cart from localStorage
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                cart.push({name, price, size, quantity});
+                localStorage.setItem('cart', JSON.stringify(cart));
+
+                // Redirect to cart
+                window.location.href = 'cart.html';
+            });
+        });
+    </script>
+</body>
+</html>
